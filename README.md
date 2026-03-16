@@ -1,188 +1,254 @@
-# Assados Delivery
+# Bora Desapegar - Guia de Implantacao e Replicacao
 
-Sistema de E-commerce para Delivery de Assados
+Este repositorio contem um sistema web em PHP (arquitetura MVC) para catalogo e venda de pecas de brecho infantil.
 
-**Projeto Acadêmico** - Disciplinas: Desenvolvimento Web Avançado e Banco de Dados Avançado
-
----
-
-## Sobre
-
-Este projeto consiste em um sistema web completo para gerenciamento de delivery de assados artesanais, com foco na experiência do usuário e na eficiência operacional. O sistema foi desenvolvido utilizando a arquitetura MVC (Model-View-Controller) e implementa recursos avançados de banco de dados para garantir performance e integridade dos dados
+Objetivo deste README:
+- explicar como rodar o projeto localmente;
+- documentar como replicar o mesmo sistema para outra empresa;
+- servir como checklist de configuracao e entrega.
 
 ---
 
-## Funcionalidades
+## 1. Visao Geral
 
-### Área Pública (Cliente)
-- Catálogo de produtos organizado por categorias
-- Sistema de carrinho de compras
-- Cadastro e autenticação de clientes
-- Realização de pedidos
-- Histórico de compras
-- Interface responsiva
+O sistema possui duas areas principais:
+- Area publica: listagem de pecas, carrinho, checkout, paginas institucionais.
+- Area administrativa: dashboard, gestao de pecas, vendas, clientes, pedidos e mensagens.
 
-### Painel Administrativo
-- Autenticação de administradores
-- Dashboard com métricas e indicadores
-- CRUD completo de Produtos
-- CRUD completo de Categorias
-- Gerenciamento de Clientes
-- Controle de Pedidos
-- Relatórios gerenciais
-
-### Recursos de Banco de Dados
-- **TRIGGER**: Auditoria automática de alterações de preço
-- **STORED PROCEDURE**: Inserção em lote de produtos
-- **FUNCTION**: Validação de disponibilidade de estoque
-- **ÍNDICES**: Otimização de consultas em tabelas principais
+Principais tecnologias:
+- PHP 8+
+- MySQL/MariaDB
+- PDO (prepared statements)
+- HTML/CSS/JavaScript (sem framework)
 
 ---
 
-## Arquitetura do Projeto
+## 2. Estrutura do Projeto
 
-O projeto foi estruturado seguindo o padrão MVC para facilitar a manutenção e escalabilidade:
-
-```
-assados-delivery/
-├── config/              # Configurações
-│   ├── database.php     # Conexão PDO (Singleton)
-│   └── config.php       # Constantes do sistema
-├── controllers/         # Controladores (MVC)
-├── models/              # Modelos (MVC)
-│   ├── Model.php        # Classe abstrata base
-│   ├── Produto.php      # Model de Produtos
-│   ├── Categoria.php    # Model de Categorias
-│   ├── Cliente.php      # Model de Clientes
-│   ├── Usuario.php      # Model de Usuários Admin
-│   └── Pedido.php       # Model de Pedidos
-├── views/               # Views (Templates)
-├── public/              # Arquivos públicos
-│   └── assets/
-│       ├── css/         # Estilos
-│       ├── js/          # JavaScript
-│       └── img/         # Imagens
-├── admin/               # Painel administrativo
-├── api/                 # APIs REST
-├── database/            # Scripts SQL
-│   ├── schema.sql       # Estrutura do banco
-│   └── seed.sql         # Dados iniciais
-├── index.php            # Página inicial
-└── README.md            # Documentação
+```text
+desapega/
+|- admin/                # Painel administrativo
+|- api/                  # Endpoints auxiliares
+|- config/               # Configuracoes (site e banco)
+|- controllers/          # Regras de negocio
+|- models/               # Acesso a dados
+|- views/partials/       # Header e footer compartilhados
+|- public/assets/        # CSS, JS e imagens
+|- database/             # Scripts SQL de schema e seed
+|- index.php             # Home
+|- cardapio.php          # Catalogo
+|- checkout.php          # Finalizacao de pedido
+|- contato.php           # Pagina de contato
+|- sobre.php             # Pagina institucional
 ```
 
----
-
-## 🗄️ Banco de Dados
-
-### Tabelas Criadas
-
-1. **categorias** - Categorias dos produtos
-2. **produtos** - Cardápio completo
-3. **clientes** - Cadastro de clientes
-4. **usuarios_admin** - Administradores do sistema
-5. **pedidos** - Pedidos realizados
-6. **pedidos_itens** - Itens de cada pedido
-7. **auditoria_precos** - Log de alterações de preço (TRIGGER)
-
-### Recursos Avançados
-
-### Recursos Avançados Implementados
-
-#### TRIGGER - Auditoria de Preços
-Registra automaticamente todas as alterações de preço dos produtos, incluindo valor anterior, novo valor e usuário responsável.
-
-#### STORED PROCEDURE - Inserção em Lote
-Permite a inserção de múltiplos produtos simultaneamente através de um objeto JSON, otimizando operações de cadastro em massa.
-
-#### FUNCTION - Validação de Estoque
-Verifica a disponibilidade de estoque antes da finalização do pedido, retornando TRUE ou FALSE conforme disponibilidade.
-
-#### Índices de Otimização
-- Índice composto em produtos (categoria_id, ativo)
-- Índice em pedidos (data_entrega, status)
-- Índice full-text para busca textual em produtos
-- Índices em todas as chaves estrangeiras
+Arquivos mais importantes para configuracao:
+- `config/database.php`
+- `config/config.php`
+- `database/schema_bora_desapegar.sql`
+- `database/seed_bora_desapegar.sql`
 
 ---
 
-## Instruções de Instalação
+## 3. Como Rodar Localmente (XAMPP)
 
-### Requisitos
-- XAMPP ou WAMP (Apache + MySQL + PHP 7.4 ou superior)
-- DBeaver (opcional, para gerenciar banco)
-- Navegador moderno
+### 3.1 Pre-requisitos
+- XAMPP (Apache + MySQL)
+- PHP 8 ou superior
+- Navegador web
 
-### Passo 1: Configurar o Banco de Dados
+### 3.2 Passo a passo
 
-1. Abra o **DBeaver** ou **phpMyAdmin**
-2. Execute o arquivo `database/schema.sql` para criar o banco e tabelas
-- DBeaver (opcional, para gerenciamento visual do banco)
-- Navegador web moderno
+1. Copie o projeto para:
+   - `C:/xampp/htdocs/desapega`
 
-### Configuração do Banco de Dados
+2. Inicie Apache e MySQL no XAMPP.
 
-1. Inicie o MySQL através do XAMPP
-2. Acesse o phpMyAdmin ou DBeaver
-3. Execute o script `database/schema.sql` para criar a estrutura
-4. Execute o script `database/seed.sql` para popular com dados iniciais
+3. Crie/importe o banco com os scripts do projeto.
 
-### Configuração da Aplicação
+Opcao via terminal (Windows):
 
-1. Copie o projeto para a pasta `htdocs` do XAMPP
-2. Verifique as credenciais do banco em `config/database.php`
-3. Inicie o Apache através do XAMPP Control Panel
-4. Acesse através do navegador
+```bash
+C:\xampp\mysql\bin\mysql -u root -e "SOURCE C:/xampp/htdocs/desapega/database/schema_bora_desapegar.sql"
+C:\xampp\mysql\bin\mysql -u root -e "SOURCE C:/xampp/htdocs/desapega/database/seed_bora_desapegar.sql"
+```
 
-### Acessos Padrão
+4. Confirme as credenciais em `config/database.php`:
 
-**Cliente de Teste:**
-- Email: cliente@teste.com
-- Senha: 123456
+```php
+define('DB_HOST', '127.0.0.1');
+define('DB_NAME', 'bora_desapegar');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+```
 
-**Administrador:**
-- Email: admin@assados.com
-- Senha: admin123
+5. Acesse no navegador:
+   - `http://localhost/desapega`
 
----
-
-## Tecnologias Utilizadas
-
-- PHP 7.4+ (back-end)
-- MySQL 8.0 (banco de dados)
-- HTML5, CSS3, JavaScript (front-end)
-- PDO (camada de abstração de banco)
-- Arquitetura MVC
+### 3.3 Acesso administrativo padrao
+- URL: `http://localhost/desapega/admin/`
+- Email: `admin@boradesapegar.com`
+- Senha: `admin123`
 
 ---
 
-## Modelo de Negócio
+## 4. Banco de Dados (Resumo)
 
-O sistema foi desenvolvido para um delivery fictício de assados artesanais que opera exclusivamente aos finais de semana. O modelo contempla:
+Schema principal de replicacao: `database/schema_bora_desapegar.sql`
 
-- Catálogo com carnes, acompanhamentos, combos e bebidas
-- Agendamento de pedidos para sábados e domingos
-- Horário de funcionamento: 10h às 15h
-- Sistema de gestão completo para o administrador
+Tabelas centrais:
+- `usuarios_admin`
+- `pecas`
+- `vendas`
 
----
+Seed recomendado para ambiente novo:
+- `database/seed_bora_desapegar.sql`
 
-## Considerações Finais
-
-Este projeto foi desenvolvido como trabalho acadêmico para as disciplinas de Desenvolvimento Web Avançado e Banco de Dados Avançado. Todos os requisitos da rubrica de avaliação foram contemplados, incluindo a implementação de recursos avançados de banco de dados (triggers, procedures e functions) e a construção de um painel administrativo com dashboard de indicadores.
-
-O código foi estruturado seguindo boas práticas de programação, com separação de responsabilidades através do padrão MVC e utilização de prepared statements para segurança contra SQL injection.
-
----
-
-## Contato
-
-📞 (44) 99968-0220  
-📧 contato@assadosdelivery.com  
-📍 Campo Mourão-PR
+Observacao:
+- Existem scripts legados do projeto antigo no diretorio `database/`.
+- Para replicar o modelo atual de brecho, utilize sempre os arquivos com sufixo `bora_desapegar`.
 
 ---
 
-**Desenvolvido por:** LBP-StartWeb  
-**Data:** Novembro de 2025  
-**Ferramentas:** XAMPP, DBeaver, VS Code, Git
+## 5. Guia de Replicacao Para Outra Empresa
+
+Use esta sequencia para clonar o sistema para uma nova marca.
+
+### 5.1 Duplicar o projeto
+
+1. Copie a pasta `desapega` para um novo nome (exemplo: `empresa-x`).
+2. Ajuste o caminho no Apache/XAMPP conforme a nova pasta.
+
+### 5.2 Criar banco da nova empresa
+
+1. Duplique o schema atual e troque o nome do banco.
+2. Exemplo: `empresa_x_brecho`.
+3. Atualize `config/database.php` com o novo nome de banco.
+
+### 5.3 Atualizar identidade da marca
+
+Edite `config/config.php`:
+- `SITE_NAME`
+- `SITE_SLOGAN`
+- `SITE_URL`
+- `SITE_TELEFONE`
+- `SITE_INSTAGRAM`
+- `SITE_CIDADE`
+- `SITE_ESTADO`
+
+### 5.4 Atualizar contatos e links diretos
+
+Mesmo com constantes, alguns links podem estar fixos nas paginas.
+Revise principalmente:
+- `views/partials/header.php`
+- `views/partials/footer.php`
+- `contato.php`
+- `index.php`
+- `cardapio.php`
+- `pedido-confirmado.php`
+
+Trocas tipicas:
+- Numero do WhatsApp (`wa.me/55...`)
+- @ do Instagram
+- Textos de atendimento e cidade
+
+### 5.5 Personalizar visual
+
+1. Ajuste cores e componentes em `public/assets/css/style.css`.
+2. Troque imagens e placeholders em `public/assets/img/`.
+3. Revise textos institucionais nas paginas `sobre.php` e `contato.php`.
+
+### 5.6 Revisar dados iniciais
+
+1. Atualize o seed com categorias/pecas reais da nova empresa.
+2. Crie usuario admin definitivo e altere a senha padrao.
+
+### 5.7 Matriz rapida de personalizacao
+
+Use esta matriz para acelerar a replicacao:
+
+| Item | Onde alterar | Exemplo |
+|---|---|---|
+| Nome da empresa | `config/config.php` -> `SITE_NAME` | Empresa X Kids |
+| Slogan | `config/config.php` -> `SITE_SLOGAN` | Moda infantil seminova com economia |
+| URL base | `config/config.php` -> `SITE_URL` | http://localhost/empresa-x |
+| Telefone | `config/config.php` + links fixos | (11) 99999-9999 |
+| Instagram | `config/config.php` + header/footer/contato | https://instagram.com/empresa_x |
+| Cidade/UF | `config/config.php` | Sao Paulo / SP |
+| Cores e identidade | `public/assets/css/style.css` | nova paleta da marca |
+| Conteudo institucional | `sobre.php` e `contato.php` | texto da nova empresa |
+| Credenciais admin | banco `usuarios_admin` | usuario e senha exclusivos |
+
+---
+
+## 6. Fluxo Operacional Recomendado
+
+1. Admin cadastra pecas em `admin/pecas.php`.
+2. Cliente navega no catalogo (`cardapio.php`) e monta carrinho.
+3. Checkout registra pedido.
+4. Admin acompanha pedidos/vendas no painel.
+
+---
+
+## 7. Checklist de Go-live
+
+Antes de publicar para cliente final:
+
+1. Banco importado sem erro (schema + seed).
+2. Login admin funcionando.
+3. Cadastro de peca com upload de imagem funcionando.
+4. Catalogo exibindo imagens corretamente.
+5. Botao de WhatsApp abrindo o numero correto.
+6. Link de Instagram correto no topo/rodape/contato.
+7. Texto de marca atualizado em todas as paginas.
+8. Senha admin padrao alterada.
+9. `display_errors` desativado em producao.
+
+---
+
+## 8. Troubleshooting Rapido
+
+Erro de conexao com banco:
+- verifique host, nome do banco, usuario e senha em `config/database.php`.
+
+Pagina sem estilo atualizado:
+- limpe cache do navegador;
+- se necessario, aplique versao no CSS (cache busting).
+
+Upload de imagem falhando:
+- verifique permissao de escrita em `public/assets/img/pecas/`;
+- confirme extensao GD habilitada no PHP.
+
+WhatsApp abrindo numero antigo:
+- procure por `wa.me` nos arquivos PHP e substitua os links fixos restantes.
+
+---
+
+## 9. Padrao de Entrega Para Nova Empresa
+
+Para cada nova implantacao, entregue:
+- pasta do projeto personalizada;
+- dump SQL da nova base;
+- usuario e senha admin iniciais;
+- mini manual com URL publica, rotina de cadastro e rotina de venda.
+
+Isso reduz retrabalho e acelera a entrada em operacao.
+
+---
+
+## 10. Licenca e Uso
+
+Projeto de base customizavel para implantacoes de pequeno porte.
+
+Recomendacao:
+- manter este README como documento principal;
+- registrar qualquer ajuste especifico da empresa em um arquivo adicional, por exemplo `README_CLIENTE_NOME.md`.
+
+---
+
+## 11. Template Reutilizavel (Outros Projetos)
+
+Para reaproveitar este processo em novos clientes, use o arquivo:
+- `README_TEMPLATE_REPLICACAO.md`
+
+Ele foi criado como modelo generico (com placeholders) para copiar e adaptar rapidamente em qualquer projeto semelhante.

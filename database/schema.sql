@@ -97,6 +97,7 @@ CREATE TABLE pedidos (
     subtotal DECIMAL(10,2) NOT NULL,
     taxa_entrega DECIMAL(10,2) DEFAULT 0,
     total DECIMAL(10,2) NOT NULL,
+    forma_pagamento VARCHAR(50) DEFAULT 'dinheiro',
     observacoes TEXT,
     endereco_entrega TEXT NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

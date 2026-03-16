@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrinho - <?php echo SITE_NAME; ?></title>
-    <link rel="stylesheet" href="public/assets/css/style.css">
+    <link rel="stylesheet" href="public/assets/css/style.css?v=20260316b">
     <style>
         .carrinho-container {
             max-width: 1200px;
@@ -22,9 +22,10 @@ if (session_status() === PHP_SESSION_NONE) {
         .carrinho-vazio {
             text-align: center;
             padding: 4rem 2rem;
-            background: white;
+            background: #fff;
+            border: 1px solid rgba(74, 144, 226, 0.15);
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 22px rgba(74, 144, 226, 0.12);
         }
         .carrinho-grid {
             display: grid;
@@ -33,10 +34,11 @@ if (session_status() === PHP_SESSION_NONE) {
             margin-top: 2rem;
         }
         .carrinho-items {
-            background: white;
+            background: #fff;
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(74, 144, 226, 0.15);
+            box-shadow: 0 10px 22px rgba(74, 144, 226, 0.12);
         }
         .carrinho-item {
             display: grid;
@@ -98,10 +100,11 @@ if (session_status() === PHP_SESSION_NONE) {
             padding: 0.5rem;
         }
         .resumo-pedido {
-            background: white;
+            background: #fff;
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(74, 144, 226, 0.15);
+            box-shadow: 0 10px 22px rgba(74, 144, 226, 0.12);
             height: fit-content;
             position: sticky;
             top: 20px;
@@ -137,7 +140,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <?php include 'views/partials/header.php'; ?>
 
     <div class="carrinho-container">
-        <h1 class="section-title">Meu Carrinho</h1>
+        <h1 class="section-title">Minha Sacola</h1>
 
         <div id="carrinho-content">
             <!-- Conteúdo será carregado via JavaScript -->
@@ -152,6 +155,33 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <script src="public/assets/js/carrinho.js"></script>
     <script>
+        // Migração automática: corrigir caminhos de imagem antigos
+        function migrarCarrinho() {
+            let carrinho = obterCarrinho();
+            let modificado = false;
+            
+            carrinho = carrinho.map(item => {
+                // Se a imagem não tem o caminho completo, adicionar
+                if (item.imagem && !item.imagem.includes('public/assets/img/pecas/')) {
+                    item.imagem = 'public/assets/img/pecas/' + item.imagem;
+                    modificado = true;
+                }
+                // Se não tem imagem, usar default
+                if (!item.imagem || item.imagem === 'null' || item.imagem === 'NULL') {
+                    item.imagem = 'public/assets/img/pecas/default.jpg';
+                    modificado = true;
+                }
+                return item;
+            });
+            
+            if (modificado) {
+                salvarCarrinho(carrinho);
+            }
+        }
+        
+        // Executar migração ao carregar a página
+        migrarCarrinho();
+        
         // Renderizar carrinho
         function renderizarCarrinho() {
             const carrinho = obterCarrinho();
@@ -161,10 +191,10 @@ if (session_status() === PHP_SESSION_NONE) {
                 container.innerHTML = `
                     <div class="carrinho-vazio">
                         <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
-                        <h2>Seu carrinho está vazio</h2>
-                        <p style="color: #666; margin: 1rem 0;">Adicione produtos do nosso cardápio!</p>
+                        <h2>Sua sacola está vazia</h2>
+                        <p style="color: #666; margin: 1rem 0;">Adicione peças ao seu interesse!</p>
                         <a href="cardapio.php" class="btn btn-primary" style="margin-top: 1rem;">
-                            Ver Cardápio
+                            Ver Peças
                         </a>
                     </div>
                 `;
@@ -180,7 +210,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
                 itensHTML += `
                     <div class="carrinho-item">
-                        <img src="${item.imagem || '<?php echo SITE_URL; ?>/public/assets/img/produtos/placeholder.jpg'}" 
+                            <img src="${item.imagem || 'public/assets/img/pecas/default.jpg'}" 
                              alt="${item.nome}" class="item-img">
                         
                         <div class="item-info">
@@ -216,13 +246,13 @@ if (session_status() === PHP_SESSION_NONE) {
                         
                         <div style="margin-top: 2rem;">
                             <a href="cardapio.php" style="color: var(--cor-secundaria); text-decoration: none;">
-                                ← Continuar Comprando
+                                ← Continuar vendo peças
                             </a>
                         </div>
                     </div>
                     
                     <div class="resumo-pedido">
-                        <h2 style="margin-bottom: 1.5rem;">Resumo do Pedido</h2>
+                        <h2 style="margin-bottom: 1.5rem;">Resumo da Sacola</h2>
                         
                         <div class="resumo-item">
                             <span>Subtotal (${carrinho.length} ${carrinho.length === 1 ? 'item' : 'itens'})</span>
@@ -230,13 +260,13 @@ if (session_status() === PHP_SESSION_NONE) {
                         </div>
                         
                         <div class="resumo-item">
-                            <span>Taxa de Entrega</span>
+                            <span>Taxa de envio</span>
                             <span>${frete === 0 ? 'GRÁTIS' : 'R$ ' + frete.toFixed(2).replace('.', ',')}</span>
                         </div>
                         
                         ${subtotal < 50 ? `
                             <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; margin: 1rem 0; font-size: 0.9rem;">
-                                <strong>💡 Dica:</strong> Faltam R$ ${(50 - subtotal).toFixed(2).replace('.', ',')} para frete grátis!
+                                <strong>💡 Dica:</strong> Faltam R$ ${(50 - subtotal).toFixed(2).replace('.', ',')} para envio grátis!
                             </div>
                         ` : ''}
                         
@@ -246,7 +276,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         </div>
                         
                         <a href="checkout.php" class="btn btn-primary" style="width: 100%; padding: 1rem; text-align: center; margin-top: 1rem;">
-                            Finalizar Pedido
+                            Finalizar Reserva
                         </a>
                         
                         <button onclick="limparCarrinho()" class="btn btn-secondary" 

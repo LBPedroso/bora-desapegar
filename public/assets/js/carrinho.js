@@ -53,7 +53,7 @@ function adicionarAoCarrinho(produtoId) {
                     nome: produto.data.nome,
                     preco: parseFloat(produto.data.preco),
                     unidade: produto.data.unidade,
-                    imagem: produto.data.imagem,
+                    imagem: produto.data.imagem_url || 'public/assets/img/produtos/default.jpg',
                     quantidade: 1
                 });
             }

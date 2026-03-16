@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de Funcionalidades - Assados Delivery</title>
+    <title>Teste de Funcionalidades - Bora Desapegar</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -13,7 +13,7 @@
         }
         .container { max-width: 1200px; margin: 0 auto; }
         h1 { 
-            color: #E63946; 
+            color: #4A90E2; 
             margin-bottom: 20px;
             text-align: center;
         }
@@ -28,7 +28,7 @@
             color: #2B2D42;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #F77F00;
+            border-bottom: 2px solid #A8D8FF;
         }
         .status {
             display: inline-block;
@@ -61,7 +61,7 @@
         a.test-link {
             display: inline-block;
             padding: 8px 15px;
-            background: #E63946;
+            background: #4A90E2;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -80,7 +80,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🧪 Teste de Funcionalidades - Assados Delivery</h1>
+        <h1>🧪 Teste de Funcionalidades - Bora Desapegar</h1>
 
         <?php
         require_once 'config/config.php';
@@ -161,7 +161,7 @@
             }
             
             // Testar PROCEDURE
-            $stmt = $db->query("SHOW PROCEDURE STATUS WHERE Db = 'assados_delivery' AND Name = 'sp_inserir_produtos_massivo'");
+            $stmt = $db->query("SHOW PROCEDURE STATUS WHERE Db = 'bora_desapegar' AND Name = 'sp_inserir_produtos_massivo'");
             $procedure = $stmt->fetch();
             if ($procedure) {
                 $testes[] = ['nome' => 'PROCEDURE (Inserção Massiva)', 'status' => 'ok', 'msg' => 'Configurado'];
@@ -170,7 +170,7 @@
             }
             
             // Testar FUNCTION
-            $stmt = $db->query("SHOW FUNCTION STATUS WHERE Db = 'assados_delivery' AND Name = 'fn_verificar_estoque'");
+            $stmt = $db->query("SHOW FUNCTION STATUS WHERE Db = 'bora_desapegar' AND Name = 'fn_verificar_estoque'");
             $function = $stmt->fetch();
             if ($function) {
                 $testes[] = ['nome' => 'FUNCTION (Verificar Estoque)', 'status' => 'ok', 'msg' => 'Configurado'];

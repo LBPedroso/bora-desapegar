@@ -24,24 +24,30 @@ class AuthController {
     /**
      * Login de cliente
      */
-    public function loginCliente($email, $senha) {
-        $cliente = $this->clienteModel->findByEmail($email);
-        
-        if (!$cliente) {
-            return ['success' => false, 'message' => 'Email não cadastrado'];
+    public function loginCliente($cpfOuTelefone, $senha) {
+        try {
+            $cliente = $this->clienteModel->findByCpfOrTelefone($cpfOuTelefone);
+
+            if (!$cliente) {
+                return ['success' => false, 'message' => 'CPF ou telefone não cadastrado'];
+            }
+
+            if (!password_verify($senha, $cliente['senha'])) {
+                return ['success' => false, 'message' => 'Senha incorreta'];
+            }
+
+            // Criar sessão
+            $_SESSION['cliente_id'] = $cliente['id'];
+            $_SESSION['cliente_nome'] = $cliente['nome'];
+            $_SESSION['cliente_email'] = $cliente['email'] ?? null;
+            $_SESSION['cliente_cpf'] = $cliente['cpf'] ?? null;
+            $_SESSION['cliente_telefone'] = $cliente['telefone'] ?? null;
+            $_SESSION['tipo_usuario'] = 'cliente';
+
+            return ['success' => true, 'message' => 'Login realizado com sucesso'];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Não foi possível fazer login no momento.'];
         }
-        
-        if (!password_verify($senha, $cliente['senha'])) {
-            return ['success' => false, 'message' => 'Senha incorreta'];
-        }
-        
-        // Criar sessão
-        $_SESSION['cliente_id'] = $cliente['id'];
-        $_SESSION['cliente_nome'] = $cliente['nome'];
-        $_SESSION['cliente_email'] = $cliente['email'];
-        $_SESSION['tipo_usuario'] = 'cliente';
-        
-        return ['success' => true, 'message' => 'Login realizado com sucesso'];
     }
     
     /**
@@ -75,38 +81,62 @@ class AuthController {
      * Registrar novo cliente
      */
     public function registrarCliente($dados) {
-        // Validar dados
-        if (empty($dados['nome']) || empty($dados['email']) || empty($dados['senha'])) {
-            return ['success' => false, 'message' => 'Preencha todos os campos obrigatórios'];
+        // Validar dados básicos
+        if (empty($dados['nome']) || empty($dados['senha'])) {
+            return ['success' => false, 'message' => 'Preencha nome e senha'];
         }
-        
-        // Verificar se email já existe
-        if ($this->clienteModel->findByEmail($dados['email'])) {
-            return ['success' => false, 'message' => 'Este email já está cadastrado'];
+
+        // Validar que pelo menos CPF OU telefone foi informado
+        if (empty($dados['cpf']) && empty($dados['telefone'])) {
+            return ['success' => false, 'message' => 'Informe CPF ou telefone para cadastro'];
         }
-        
-        // Validar email
-        if (!filter_var($dados['email'], FILTER_VALIDATE_EMAIL)) {
-            return ['success' => false, 'message' => 'Email inválido'];
+
+        // Normalizar campos numéricos
+        $cpfNormalizado = preg_replace('/\D/', '', (string) ($dados['cpf'] ?? ''));
+        $telefoneNormalizado = preg_replace('/\D/', '', (string) ($dados['telefone'] ?? ''));
+
+        $dados['cpf'] = $cpfNormalizado !== '' ? $cpfNormalizado : null;
+        $dados['telefone'] = $telefoneNormalizado !== '' ? $telefoneNormalizado : null;
+        $dados['email'] = null;
+
+        // Endereço agora é opcional
+        $dados['endereco_rua'] = !empty($dados['endereco_rua']) ? $dados['endereco_rua'] : null;
+        $dados['endereco_numero'] = !empty($dados['endereco_numero']) ? $dados['endereco_numero'] : null;
+        $dados['endereco_complemento'] = !empty($dados['endereco_complemento']) ? $dados['endereco_complemento'] : null;
+        $dados['endereco_bairro'] = !empty($dados['endereco_bairro']) ? $dados['endereco_bairro'] : null;
+        $dados['endereco_cidade'] = !empty($dados['endereco_cidade']) ? $dados['endereco_cidade'] : null;
+        $dados['endereco_estado'] = !empty($dados['endereco_estado']) ? $dados['endereco_estado'] : null;
+        $dados['endereco_cep'] = !empty($dados['endereco_cep']) ? preg_replace('/\D/', '', $dados['endereco_cep']) : null;
+
+        // Evitar duplicidade de CPF
+        if (!empty($dados['cpf']) && $this->clienteModel->findByCPF($dados['cpf'])) {
+            return ['success' => false, 'message' => 'Este CPF já está cadastrado'];
         }
-        
+
+        // Evitar duplicidade de telefone
+        if (!empty($dados['telefone']) && $this->clienteModel->findByTelefone($dados['telefone'])) {
+            return ['success' => false, 'message' => 'Este telefone já está cadastrado'];
+        }
+
         // Hash da senha
         $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
-        
+
         // Criar cliente
         try {
             $cliente_id = $this->clienteModel->create($dados);
-            
+
             // Auto-login
             $cliente = $this->clienteModel->findById($cliente_id);
             $_SESSION['cliente_id'] = $cliente['id'];
             $_SESSION['cliente_nome'] = $cliente['nome'];
-            $_SESSION['cliente_email'] = $cliente['email'];
+            $_SESSION['cliente_email'] = $cliente['email'] ?? null;
+            $_SESSION['cliente_cpf'] = $cliente['cpf'] ?? null;
+            $_SESSION['cliente_telefone'] = $cliente['telefone'] ?? null;
             $_SESSION['tipo_usuario'] = 'cliente';
-            
+
             return ['success' => true, 'message' => 'Cadastro realizado com sucesso'];
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'Erro ao cadastrar: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Erro ao cadastrar cliente. Verifique os dados e tente novamente.'];
         }
     }
     
@@ -121,22 +151,22 @@ class AuthController {
     /**
      * Verificar se está logado como cliente
      */
-    public function isCliente() {
+    public static function isCliente() {
         return isset($_SESSION['cliente_id']) && $_SESSION['tipo_usuario'] === 'cliente';
     }
     
     /**
      * Verificar se está logado como admin
      */
-    public function isAdmin() {
+    public static function isAdmin() {
         return isset($_SESSION['admin_id']) && $_SESSION['tipo_usuario'] === 'admin';
     }
     
     /**
      * Requerer login de cliente
      */
-    public function requireCliente() {
-        if (!$this->isCliente()) {
+    public static function requireCliente() {
+        if (!self::isCliente()) {
             header('Location: ' . SITE_URL . '/login.php');
             exit;
         }
@@ -145,8 +175,8 @@ class AuthController {
     /**
      * Requerer login de admin
      */
-    public function requireAdmin() {
-        if (!$this->isAdmin()) {
+    public static function requireAdmin() {
+        if (!self::isAdmin()) {
             header('Location: ' . SITE_URL . '/admin/login.php');
             exit;
         }

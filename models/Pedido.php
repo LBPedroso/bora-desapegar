@@ -72,34 +72,67 @@ class Pedido extends Model {
     /**
      * Criar pedido com itens
      */
-    public function criarPedido($dados_pedido, $itens) {
+    public function criarPedido($cliente_id, $itens, $total, $taxa_entrega, $dados_entrega) {
         try {
             $this->db->beginTransaction();
+            
+            // Buscar endereço do cliente
+            $stmt = $this->db->prepare("SELECT endereco_rua, endereco_numero, endereco_complemento, 
+                                         endereco_bairro, endereco_cidade, endereco_estado, endereco_cep 
+                                         FROM clientes WHERE id = ?");
+            $stmt->execute([$cliente_id]);
+            $cliente = $stmt->fetch();
+            
+            $endereco = sprintf(
+                "%s, %s %s - %s, %s/%s - CEP: %s",
+                $cliente['endereco_rua'] ?? '',
+                $cliente['endereco_numero'] ?? '',
+                $cliente['endereco_complemento'] ? '(' . $cliente['endereco_complemento'] . ')' : '',
+                $cliente['endereco_bairro'] ?? '',
+                $cliente['endereco_cidade'] ?? '',
+                $cliente['endereco_estado'] ?? '',
+                $cliente['endereco_cep'] ?? ''
+            );
+            
+            $subtotal = $total - $taxa_entrega;
+            
+            // Preparar dados do pedido
+            $dados_pedido = [
+                'cliente_id' => $cliente_id,
+                'subtotal' => $subtotal,
+                'total' => $total,
+                'taxa_entrega' => $taxa_entrega,
+                'status' => 'pendente',
+                'data_entrega' => $dados_entrega['data_entrega'],
+                'forma_pagamento' => $dados_entrega['forma_pagamento'] ?? 'dinheiro',
+                'observacoes' => $dados_entrega['observacoes'] ?? '',
+                'endereco_entrega' => $endereco
+            ];
             
             // Inserir pedido
             $pedido_id = $this->create($dados_pedido);
             
             // Inserir itens
             foreach ($itens as $item) {
-                $item['pedido_id'] = $pedido_id;
-                
                 $sql = "INSERT INTO pedidos_itens (pedido_id, produto_id, produto_nome, quantidade, preco_unitario, subtotal)
                         VALUES (?, ?, ?, ?, ?, ?)";
                 
+                $subtotal = $item['preco'] * $item['quantidade'];
+                
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([
-                    $item['pedido_id'],
-                    $item['produto_id'],
-                    $item['produto_nome'],
+                    $pedido_id,
+                    $item['id'],
+                    $item['nome'],
                     $item['quantidade'],
-                    $item['preco_unitario'],
-                    $item['subtotal']
+                    $item['preco'],
+                    $subtotal
                 ]);
                 
                 // Atualizar estoque
                 $sql_estoque = "UPDATE produtos SET estoque = estoque - ? WHERE id = ?";
                 $stmt_estoque = $this->db->prepare($sql_estoque);
-                $stmt_estoque->execute([$item['quantidade'], $item['produto_id']]);
+                $stmt_estoque->execute([$item['quantidade'], $item['id']]);
             }
             
             $this->db->commit();

@@ -8,10 +8,22 @@ if (session_status() === PHP_SESSION_NONE) {
     <div class="header-top">
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                📞 Contato: (44) 99968-0220 | 📧 contato@assadosdelivery.com
+                <i class="bi bi-whatsapp brand-icon" aria-hidden="true" style="color: #ffffff;"></i>
+                <a href="https://wa.me/5544998571669?text=Ola!%20Quero%20ver%20as%20pecas%20do%20Bora%20Desapegar." 
+                   target="_blank" 
+                   style="color: white; text-decoration: none; font-weight: 600;">
+                    (44) 99857-1669
+                </a>
+                 | <i class="bi bi-instagram brand-icon" aria-hidden="true" style="color: #ffffff; margin-left: 6px;"></i>
+                <a href="https://www.instagram.com/desapegoinfantil.menino/" 
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   style="color: white; text-decoration: none;">
+                    @desapegoinfantil.menino
+                </a>
             </div>
             <div>
-                ⏰ Aberto apenas aos Sábados e Domingos (10h às 15h), agendamento a semana toda
+                📲 Atendimento online para maes e familias
             </div>
         </div>
     </div>
@@ -20,7 +32,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="header-content">
             <div>
                 <a href="<?php echo SITE_URL; ?>/index.php" class="logo">
-                    <span class="logo-icon">🔥</span>
+                    <span class="logo-icon">🧸</span>
                     <div>
                         <div><?php echo SITE_NAME; ?></div>
                         <div class="slogan"><?php echo SITE_SLOGAN; ?></div>
@@ -31,7 +43,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <nav>
                 <ul>
                     <li><a href="<?php echo SITE_URL; ?>/index.php">Início</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>/cardapio.php">Cardápio</a></li>
+                    <li><a href="<?php echo SITE_URL; ?>/cardapio.php">Peças</a></li>
                     <li><a href="<?php echo SITE_URL; ?>/sobre.php">Sobre</a></li>
                     <li><a href="<?php echo SITE_URL; ?>/contato.php">Contato</a></li>
                     <?php if (isset($_SESSION['cliente_id'])): ?>
@@ -42,7 +54,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     <?php endif; ?>
                     <li>
                         <a href="<?php echo SITE_URL; ?>/carrinho.php" class="btn-carrinho">
-                            🛒 Carrinho
+                            🛒 Sacola
                             <span class="carrinho-count" id="carrinho-count">0</span>
                         </a>
                     </li>

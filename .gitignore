@@ -1,23 +1,83 @@
-# Arquivos do sistema
+# ================================================
+# .gitignore - Bora Desapegar
+# Arquivos e pastas que NÃO devem ser versionados
+# ================================================
+
+# ================================================
+# ARQUIVOS SENSÍVEIS (NUNCA COMMITAR!)
+# ================================================
+.env
+.env.local
+*.key
+*.pem
+config/database.production.php
+
+# ================================================
+# IMAGENS DE UPLOAD (geradas em runtime)
+# ================================================
+public/assets/img/produtos/*.jpeg
+public/assets/img/produtos/*.jpg
+public/assets/img/produtos/*.png
+public/assets/img/produtos/*.webp
+public/assets/img/produtos/*.gif
+public/assets/img/pecas/*.jpeg
+public/assets/img/pecas/*.jpg
+public/assets/img/pecas/*.png
+public/assets/img/pecas/*.webp
+public/assets/img/pecas/*.gif
+
+# ================================================
+# PASTAS DO SISTEMA
+# ================================================
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Logs
+# ================================================
+# LOGS
+# ================================================
 *.log
 error_log
 access_log
 
-# Arquivos temporários
+# ================================================
+# ARQUIVOS TEMPORÁRIOS
+# ================================================
 *.tmp
 *.temp
+*.cache
+*.bak
+
+# ================================================
+# ARQUIVOS DE SUBMISSÃO (ZIPs)
+# ================================================
+*.zip
+*.rar
+*.tar.gz
+
+# ================================================
+# BACKUPS DE BANCO
+# ================================================
+*.sql.backup
+backup/
+
+# ================================================
+# NODE MODULES (se usar no futuro)
+# ================================================
+node_modules/
+package-lock.json
+yarn.lock
+
+# ================================================
+# COMPOSER (se usar no futuro)
+# ================================================
+vendor/
+composer.lock
 *.cache
 
 # Node modules (caso use futuramente)

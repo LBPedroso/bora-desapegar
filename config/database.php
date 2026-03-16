@@ -1,12 +1,12 @@
 <?php
 /**
  * Configuração de Conexão com Banco de Dados
- * Assados Delivery - Desenvolvimento Web Avançado
+ * Bora Desapegar
  */
 
 // Configurações do banco de dados
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'assados_delivery');
+define('DB_HOST', '127.0.0.1');
+define('DB_NAME', 'bora_desapegar');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');

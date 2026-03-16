@@ -1,22 +1,27 @@
 <?php
 /**
  * Configurações Gerais do Sistema
- * Assados Delivery
+ * Bora Desapegar
  */
 
 // Configurações do Site
-define('SITE_NAME', 'Assados Delivery');
-define('SITE_SLOGAN', 'Seu almoço, sem esforço no final de semana');
-define('SITE_URL', 'http://localhost:8080/assados-delivery');
+define('SITE_NAME', 'Bora Desapegar');
+define('SITE_SLOGAN', 'Brecho infantil online com carinho e preco justo');
+
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+define('SITE_URL', $protocol . '://' . $host . '/desapega');
 
 // Informações de Contato
-define('SITE_TELEFONE', '(44) 99968-0220');
-define('SITE_EMAIL', 'contato@assadosdelivery.com');
+define('SITE_TELEFONE', '(44) 99857-1669');
+define('SITE_INSTAGRAM', 'https://www.instagram.com/desapegoinfantil.menino/');
 define('SITE_CIDADE', 'Campo Mourão');
 define('SITE_ESTADO', 'PR');
 
 // Configurações de Sessão
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Timezone
 date_default_timezone_set('America/Sao_Paulo');
@@ -26,18 +31,18 @@ define('BASE_PATH', dirname(__DIR__));
 define('ASSETS_PATH', SITE_URL . '/public/assets');
 
 // Configurações de Horário de Funcionamento
-define('DIAS_FUNCIONAMENTO', ['Sábado', 'Domingo']);
-define('HORARIO_INICIO', '10:00');
-define('HORARIO_FIM', '15:00');
+define('DIAS_FUNCIONAMENTO', ['Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado', 'Domingo']);
+define('HORARIO_INICIO', '09:00');
+define('HORARIO_FIM', '19:00');
 
 // Configurações de Entrega
 define('TAXA_ENTREGA', 5.00);
 define('PEDIDO_MINIMO', 30.00);
 
 // Cores da Identidade Visual
-define('COR_PRIMARIA', '#E63946');   // Vermelho
-define('COR_SECUNDARIA', '#F77F00'); // Laranja
-define('COR_TERCIARIA', '#8B4513');  // Marrom
+define('COR_PRIMARIA', '#A8D8FF');
+define('COR_SECUNDARIA', '#4A90E2');
+define('COR_TERCIARIA', '#EAF6FF');
 
 // Auto-load de classes
 spl_autoload_register(function($class) {

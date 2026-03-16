@@ -16,6 +16,13 @@ $produtoModel = new Produto();
 $produto = $produtoModel->findById($_GET['id']);
 
 if ($produto) {
+    // Adicionar caminho completo da imagem
+    if (isset($produto['imagem']) && $produto['imagem']) {
+        $produto['imagem_url'] = 'public/assets/img/produtos/' . $produto['imagem'];
+    } else {
+        $produto['imagem_url'] = 'public/assets/img/produtos/default.jpg';
+    }
+    
     echo json_encode([
         'success' => true,
         'data' => $produto

@@ -4,6 +4,7 @@
  * Gerencia as operações relacionadas a produtos
  */
 
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Produto.php';
 require_once __DIR__ . '/../models/Categoria.php';
 
@@ -73,7 +74,8 @@ class ProdutoController {
         
         $sql .= " ORDER BY c.id, p.nome";
         
-        $stmt = $this->produtoModel->db->prepare($sql);
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
