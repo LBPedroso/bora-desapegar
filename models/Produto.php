@@ -8,6 +8,68 @@ require_once __DIR__ . '/Model.php';
 
 class Produto extends Model {
     protected $table = 'produtos';
+
+    public function __construct() {
+        parent::__construct();
+        $this->garantirEstruturaProdutos();
+    }
+
+    /**
+     * Garante estrutura mínima de categorias/produtos para o painel legado de produtos.
+     */
+    private function garantirEstruturaProdutos() {
+        $sqlCategorias = "CREATE TABLE IF NOT EXISTS categorias (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(100) NOT NULL,
+            descricao TEXT NULL,
+            ativo BOOLEAN DEFAULT TRUE,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_nome (nome),
+            INDEX idx_ativo (ativo)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        $sqlProdutos = "CREATE TABLE IF NOT EXISTS produtos (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            codigo VARCHAR(20) NULL,
+            nome VARCHAR(150) NOT NULL,
+            descricao TEXT NULL,
+            preco DECIMAL(10,2) NOT NULL,
+            estoque INT DEFAULT 0,
+            unidade VARCHAR(50) DEFAULT 'un',
+            categoria_id INT NULL,
+            imagem VARCHAR(255) DEFAULT 'default.jpg',
+            ativo BOOLEAN DEFAULT TRUE,
+            destaque BOOLEAN DEFAULT FALSE,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_categoria (categoria_id),
+            INDEX idx_ativo (ativo),
+            INDEX idx_destaque (destaque)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        $this->db->exec($sqlCategorias);
+        $this->db->exec($sqlProdutos);
+
+        // Compatibilidade com instalações antigas.
+        $this->db->exec("ALTER TABLE produtos ADD COLUMN IF NOT EXISTS destaque BOOLEAN DEFAULT FALSE");
+        $this->db->exec("ALTER TABLE produtos ADD COLUMN IF NOT EXISTS unidade VARCHAR(50) DEFAULT 'un'");
+        $this->db->exec("ALTER TABLE produtos ADD COLUMN IF NOT EXISTS imagem VARCHAR(255) DEFAULT 'default.jpg'");
+
+        $totalCategorias = (int) $this->db->query("SELECT COUNT(*) FROM categorias")->fetchColumn();
+        if ($totalCategorias === 0) {
+            $stmt = $this->db->prepare("INSERT INTO categorias (nome, descricao, ativo) VALUES (?, ?, 1)");
+            $categoriasPadrao = [
+                ['Roupas', 'Pecas de vestuario infantil'],
+                ['Calcados', 'Sapatos e tenis infantis'],
+                ['Acessorios', 'Acessorios em geral']
+            ];
+
+            foreach ($categoriasPadrao as $categoria) {
+                $stmt->execute($categoria);
+            }
+        }
+    }
     
     /**
      * Buscar produtos ativos

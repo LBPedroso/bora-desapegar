@@ -1,4 +1,7 @@
 <?php
+header('Location: pecas.php');
+exit;
+
 session_start();
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
@@ -334,11 +337,11 @@ $categorias = $categoriaModel->findAll();
 <body>
     <div class="container-admin">
         <aside class="sidebar">
-            <h2>🔥 Admin</h2>
+            <h2>🧸 Bora Desapegar</h2>
             <nav>
                 <a href="index.php">📊 Dashboard</a>
-                <a href="produtos.php">🥩 Produtos</a>
-                <a href="categorias.php" class="active">📁 Categorias</a>
+                <a href="produtos.php">👕 Produtos</a>
+                <a href="categorias.php" class="active">🏷️ Categorias</a>
                 <a href="pedidos.php">📦 Pedidos</a>
                 <a href="clientes.php">👥 Clientes</a>
                 <a href="mensagens.php">💬 Mensagens</a>

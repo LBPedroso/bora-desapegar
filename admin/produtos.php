@@ -1,4 +1,7 @@
 <?php
+header('Location: pecas.php');
+exit;
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -418,11 +421,11 @@ $categorias = $categoriaModel->findAll();
 <body>
     <div class="container-admin">
         <aside class="sidebar">
-            <h2>🔥 Admin</h2>
+            <h2>🧸 Bora Desapegar</h2>
             <nav>
                 <a href="index.php">📊 Dashboard</a>
-                <a href="produtos.php" class="active">🥩 Produtos</a>
-                <a href="categorias.php">📁 Categorias</a>
+                <a href="produtos.php" class="active">👕 Produtos</a>
+                <a href="categorias.php">🏷️ Categorias</a>
                 <a href="pedidos.php">📦 Pedidos</a>
                 <a href="clientes.php">👥 Clientes</a>
                 <a href="mensagens.php">💬 Mensagens</a>

@@ -8,6 +8,26 @@ require_once __DIR__ . '/Model.php';
 
 class Categoria extends Model {
     protected $table = 'categorias';
+
+    public function __construct() {
+        parent::__construct();
+        $this->garantirEstruturaCategorias();
+    }
+
+    private function garantirEstruturaCategorias() {
+        $sql = "CREATE TABLE IF NOT EXISTS categorias (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(100) NOT NULL,
+            descricao TEXT NULL,
+            ativo BOOLEAN DEFAULT TRUE,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_nome (nome),
+            INDEX idx_ativo (ativo)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        $this->db->exec($sql);
+    }
     
     /**
      * Buscar categorias ativas

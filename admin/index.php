@@ -32,7 +32,7 @@ $vendasPorCategoria = $vendaController->vendasPorCategoria();
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at top right, #fff7df, var(--bg) 40%);
+            background: var(--bg);
             color: var(--escura);
         }
 
@@ -217,11 +217,14 @@ $vendasPorCategoria = $vendaController->vendasPorCategoria();
             <h2 class="brand">Bora Desapegar</h2>
             <p class="subtitle">Painel administrativo</p>
 
-            <a class="nav-link active" href="index.php">Dashboard</a>
-            <a class="nav-link" href="pecas.php">Pecas</a>
-            <a class="nav-link" href="vendas.php">Vendas</a>
-            <a class="nav-link" href="../index.php" target="_blank">Ver site</a>
-            <a class="nav-link" href="../logout.php">Sair</a>
+            <a class="nav-link active" href="index.php">📊 Dashboard</a>
+            <a class="nav-link" href="pecas.php">🧸 Peças</a>
+            <a class="nav-link" href="vendas.php">💰 Vendas</a>
+            <a class="nav-link" href="pedidos.php">📦 Pedidos</a>
+            <a class="nav-link" href="clientes.php">👥 Clientes</a>
+            <a class="nav-link" href="mensagens.php">💬 Mensagens</a>
+            <a class="nav-link" href="../index.php" target="_blank">🌐 Ver site</a>
+            <a class="nav-link" href="../logout.php">🚪 Sair</a>
         </aside>
 
         <main class="content">

@@ -99,7 +99,7 @@ if (isset($_POST['excluir'])) {
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: #f5f2ec;
         }
         
         .container-admin {
@@ -109,7 +109,7 @@ if (isset($_POST['excluir'])) {
         
         .sidebar {
             width: 250px;
-            background: linear-gradient(180deg, #4A90E2 0%, #2F5F94 100%);
+            background: linear-gradient(180deg, #2b2d42, #1f2232);
             color: white;
             padding: 20px;
         }
@@ -322,11 +322,11 @@ if (isset($_POST['excluir'])) {
 <body>
     <div class="container-admin">
         <aside class="sidebar">
-            <h2>🔥 Admin Panel</h2>
+            <h2>🧸 Bora Desapegar</h2>
             <nav>
                 <a href="index.php">📊 Dashboard</a>
-                <a href="produtos.php">🥩 Produtos</a>
-                <a href="categorias.php">📁 Categorias</a>
+                <a href="pecas.php">🧸 Peças</a>
+                <a href="vendas.php">💰 Vendas</a>
                 <a href="pedidos.php">📦 Pedidos</a>
                 <a href="clientes.php">👥 Clientes</a>
                 <a href="mensagens.php" class="active">💬 Mensagens</a>

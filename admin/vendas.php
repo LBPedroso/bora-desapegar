@@ -183,11 +183,11 @@ $vendas = $vendaController->listarRecentes(100);
     <div class="layout">
         <aside class="sidebar">
             <h2>Bora Desapegar</h2>
-            <a class="nav-link" href="index.php">Dashboard</a>
-            <a class="nav-link" href="pecas.php">Pecas</a>
-            <a class="nav-link active" href="vendas.php">Vendas</a>
-            <a class="nav-link" href="../index.php" target="_blank">Ver site</a>
-            <a class="nav-link" href="../logout.php">Sair</a>
+            <a class="nav-link" href="index.php">📊 Dashboard</a>
+            <a class="nav-link" href="pecas.php">🧸 Peças</a>
+            <a class="nav-link active" href="vendas.php">💰 Vendas</a>
+            <a class="nav-link" href="../index.php" target="_blank">🌐 Ver site</a>
+            <a class="nav-link" href="../logout.php">🚪 Sair</a>
         </aside>
 
         <main class="content">
