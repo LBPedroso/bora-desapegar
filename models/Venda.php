@@ -9,6 +9,25 @@ require_once __DIR__ . '/Model.php';
 class Venda extends Model {
     protected $table = 'vendas';
 
+    public function __construct() {
+        parent::__construct();
+        $this->garantirEstruturaVendas();
+    }
+
+    private function garantirEstruturaVendas() {
+        $sql = "CREATE TABLE IF NOT EXISTS vendas (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            cliente VARCHAR(150) NOT NULL,
+            peca_id INT NOT NULL,
+            valor DECIMAL(10,2) NOT NULL,
+            data_venda TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_venda_peca (peca_id),
+            INDEX idx_data_venda (data_venda)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        $this->db->exec($sql);
+    }
+
     public function registrarVenda($cliente, $pecaId, $valor = null) {
         try {
             $this->db->beginTransaction();
@@ -58,8 +77,12 @@ class Venda extends Model {
                 ORDER BY v.id DESC
                 LIMIT {$limite}";
 
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll();
+        try {
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
     }
 
     public function estatisticasDashboard() {
@@ -70,17 +93,21 @@ class Venda extends Model {
             'valor_total_vendido' => 0.0
         ];
 
-        $stmt = $this->db->query("SELECT COUNT(*) AS total FROM pecas");
-        $result['total_pecas'] = (int) ($stmt->fetch()['total'] ?? 0);
+        try {
+            $stmt = $this->db->query("SELECT COUNT(*) AS total FROM pecas");
+            $result['total_pecas'] = (int) ($stmt->fetch()['total'] ?? 0);
 
-        $stmt = $this->db->query("SELECT COUNT(*) AS total FROM pecas WHERE status = 'disponivel'");
-        $result['pecas_disponiveis'] = (int) ($stmt->fetch()['total'] ?? 0);
+            $stmt = $this->db->query("SELECT COUNT(*) AS total FROM pecas WHERE status = 'disponivel'");
+            $result['pecas_disponiveis'] = (int) ($stmt->fetch()['total'] ?? 0);
 
-        $stmt = $this->db->query("SELECT COUNT(*) AS total FROM pecas WHERE status = 'vendido'");
-        $result['pecas_vendidas'] = (int) ($stmt->fetch()['total'] ?? 0);
+            $stmt = $this->db->query("SELECT COUNT(*) AS total FROM pecas WHERE status = 'vendido'");
+            $result['pecas_vendidas'] = (int) ($stmt->fetch()['total'] ?? 0);
 
-        $stmt = $this->db->query("SELECT COALESCE(SUM(valor), 0) AS total FROM {$this->table}");
-        $result['valor_total_vendido'] = (float) ($stmt->fetch()['total'] ?? 0);
+            $stmt = $this->db->query("SELECT COALESCE(SUM(valor), 0) AS total FROM {$this->table}");
+            $result['valor_total_vendido'] = (float) ($stmt->fetch()['total'] ?? 0);
+        } catch (Exception $e) {
+            // Mantém valores zero se o banco ainda estiver incompleto.
+        }
 
         return $result;
     }
@@ -92,7 +119,11 @@ class Venda extends Model {
                 GROUP BY p.categoria
                 ORDER BY total DESC";
 
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll();
+        try {
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
     }
 }

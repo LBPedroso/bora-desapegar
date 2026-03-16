@@ -11,6 +11,22 @@ AuthController::requireAdmin();
 
 $db = Database::getInstance()->getConnection();
 
+// Garante tabela de contatos em ambiente novo.
+$db->exec("CREATE TABLE IF NOT EXISTS contatos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NULL,
+    nome VARCHAR(120) NOT NULL,
+    email VARCHAR(120) NULL,
+    telefone VARCHAR(20) NULL,
+    assunto VARCHAR(150) NULL,
+    mensagem TEXT NOT NULL,
+    lido BOOLEAN DEFAULT FALSE,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_cliente (cliente_id),
+    INDEX idx_lido (lido),
+    INDEX idx_data_envio (data_envio)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
 // Buscar todas as mensagens (de clientes e anônimas)
 $sql = "SELECT c.*, cl.nome as cliente_nome, cl.email as cliente_email
         FROM contatos c

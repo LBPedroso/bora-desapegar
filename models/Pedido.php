@@ -8,18 +8,67 @@ require_once __DIR__ . '/Model.php';
 
 class Pedido extends Model {
     protected $table = 'pedidos';
+
+    public function __construct() {
+        parent::__construct();
+        $this->garantirEstruturaPedidos();
+    }
+
+    /**
+     * Garante tabelas mínimas de pedidos em ambientes novos.
+     */
+    private function garantirEstruturaPedidos() {
+        $sqlPedidos = "CREATE TABLE IF NOT EXISTS pedidos (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            cliente_id INT NOT NULL,
+            data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            data_entrega DATE NULL,
+            horario_entrega VARCHAR(20) NULL,
+            status ENUM('pendente','confirmado','preparando','em_preparo','saiu-entrega','entregue','cancelado') DEFAULT 'pendente',
+            subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+            taxa_entrega DECIMAL(10,2) NOT NULL DEFAULT 0,
+            total DECIMAL(10,2) NOT NULL DEFAULT 0,
+            forma_pagamento VARCHAR(50) DEFAULT 'dinheiro',
+            observacoes TEXT NULL,
+            endereco_entrega TEXT NULL,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_cliente (cliente_id),
+            INDEX idx_status (status),
+            INDEX idx_data_entrega (data_entrega)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        $sqlPedidosItens = "CREATE TABLE IF NOT EXISTS pedidos_itens (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            pedido_id INT NOT NULL,
+            produto_id INT NULL,
+            produto_nome VARCHAR(150) NOT NULL,
+            quantidade INT NOT NULL,
+            preco_unitario DECIMAL(10,2) NOT NULL,
+            subtotal DECIMAL(10,2) NOT NULL,
+            INDEX idx_pedido (pedido_id),
+            INDEX idx_produto (produto_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        $this->db->exec($sqlPedidos);
+        $this->db->exec($sqlPedidosItens);
+    }
     
     /**
      * Buscar pedidos por cliente
      */
     public function findByCliente($cliente_id) {
-        $sql = "SELECT * FROM {$this->table} 
-                WHERE cliente_id = ? 
-                ORDER BY criado_em DESC";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$cliente_id]);
-        return $stmt->fetchAll();
+        try {
+            $sql = "SELECT * FROM {$this->table} 
+                    WHERE cliente_id = ? 
+                    ORDER BY criado_em DESC";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$cliente_id]);
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
     }
     
     /**

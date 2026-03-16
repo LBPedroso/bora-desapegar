@@ -3,8 +3,7 @@
 -- Schema principal do projeto de brecho infantil
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS bora_desapegar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE bora_desapegar;
+-- (linhas removidas para compatibilidade com InfinityFree)
 
 -- ============================================
 -- TABELA: usuarios_admin

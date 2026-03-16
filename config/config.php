@@ -10,7 +10,8 @@ define('SITE_SLOGAN', 'Brecho infantil online com carinho e preco justo');
 
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-define('SITE_URL', $protocol . '://' . $host . '/desapega');
+$isLocal = in_array($host, ['localhost', 'localhost:8080', '127.0.0.1', '127.0.0.1:8080']);
+define('SITE_URL', $isLocal ? $protocol . '://' . $host . '/desapega' : $protocol . '://' . $host);
 
 // Informações de Contato
 define('SITE_TELEFONE', '(44) 99857-1669');

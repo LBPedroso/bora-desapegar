@@ -5,10 +5,23 @@ require_once __DIR__ . '/../controllers/VendaController.php';
 
 AuthController::requireAdmin();
 
-$vendaController = new VendaController();
-$stats = $vendaController->estatisticas();
-$vendasRecentes = $vendaController->listarRecentes(10);
-$vendasPorCategoria = $vendaController->vendasPorCategoria();
+$stats = [
+    'total_pecas' => 0,
+    'pecas_disponiveis' => 0,
+    'pecas_vendidas' => 0,
+    'valor_total_vendido' => 0
+];
+$vendasRecentes = [];
+$vendasPorCategoria = [];
+
+try {
+    $vendaController = new VendaController();
+    $stats = $vendaController->estatisticas();
+    $vendasRecentes = $vendaController->listarRecentes(10);
+    $vendasPorCategoria = $vendaController->vendasPorCategoria();
+} catch (Throwable $e) {
+    error_log('Falha ao carregar dashboard admin: ' . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

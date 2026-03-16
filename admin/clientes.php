@@ -44,6 +44,42 @@ function formatarCEP($cep) {
 // Buscar estatísticas dos clientes
 $db = Database::getInstance()->getConnection();
 
+// Garante tabelas usadas no relatório de clientes em ambiente novo.
+$db->exec("CREATE TABLE IF NOT EXISTS pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL,
+    data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_entrega DATE NULL,
+    horario_entrega VARCHAR(20) NULL,
+    status ENUM('pendente','confirmado','preparando','em_preparo','saiu-entrega','entregue','cancelado') DEFAULT 'pendente',
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+    taxa_entrega DECIMAL(10,2) NOT NULL DEFAULT 0,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0,
+    forma_pagamento VARCHAR(50) DEFAULT 'dinheiro',
+    observacoes TEXT NULL,
+    endereco_entrega TEXT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_cliente (cliente_id),
+    INDEX idx_status (status),
+    INDEX idx_data_entrega (data_entrega)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+$db->exec("CREATE TABLE IF NOT EXISTS contatos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NULL,
+    nome VARCHAR(120) NOT NULL,
+    email VARCHAR(120) NULL,
+    telefone VARCHAR(20) NULL,
+    assunto VARCHAR(150) NULL,
+    mensagem TEXT NOT NULL,
+    lido BOOLEAN DEFAULT FALSE,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_cliente (cliente_id),
+    INDEX idx_lido (lido),
+    INDEX idx_data_envio (data_envio)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
 // Total de clientes
 $sqlTotal = "SELECT COUNT(*) as total FROM clientes";
 $stmtTotal = $db->query($sqlTotal);
